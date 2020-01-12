@@ -1,0 +1,249 @@
+type Query {
+  user(userID: String, slugName: String): User
+  users: [User]
+  businesses: [Business]
+  prosNearby(bounds: CoordinatesBoundsInput!, keywords: String!): [User]
+  businessesNearby(bounds: CoordinatesBoundsInput!, keywords: String!): [User]
+  coordinatesFromAddress(address: String!): Coordinates
+}
+type User {
+  id: ID
+  name: String
+  email: String
+  slugName: String
+  isAccountConfirm: Boolean
+  isNewUser: Boolean
+  role: String
+  coverPhoto: String
+  photos: [String]
+  profilePhoto: String
+  bio: String
+  workplaces: [Workplace]
+  careerHistory: [CareerHistory]
+  qualifications: [Qualification]
+  awards: [Award]
+  business: Business
+  number: String
+  website: String
+  emailPreferences: EmailPreferences
+  isFollowing: Boolean
+  statistics: Statistics
+  followers: [User]
+  followings: [User]
+}
+type Workplace {
+  id: ID
+  business: Business
+  services: [WorkplaceService]
+  title: String
+  workingTime: [WorkingTime]
+}
+type Business {
+  id: ID
+  placeID: ID
+  name: String
+  address: String
+  openingTime: [OpeningTime]
+  services: [BusinessService]
+  members: [User]
+  coordinates: Coordinates
+  slugName: String
+}
+type OpeningTime {
+  day: String
+  startTime: Moment
+  endTime: Moment
+}
+type BusinessService {
+  id: ID
+  name: String
+  tags: [String]
+  kind: String
+}
+type Coordinates {
+  lng: Float
+  lat: Float
+}
+type WorkplaceService {
+  id: ID
+  name: String
+  tags: [String]
+  kind: String
+}
+type WorkingTime {
+  id: ID
+  day: String
+  startTime: Moment
+  endTime: Moment
+}
+type CareerHistory {
+  id: ID
+  title: String
+  business: Business
+  startDate: Moment
+  endDate: Moment
+}
+type Qualification {
+  id: ID
+  title: String
+  provider: String
+  completedDate: Moment
+}
+type Award {
+  id: ID
+  title: String
+  provider: String
+  receivedDate: Moment
+}
+type EmailPreferences {
+  unreadMessages: Boolean
+  tipsAndTricks: Boolean
+}
+type Statistics {
+  profileClicks: Int
+  avgProfileClicks: Float
+  followers: Int
+  avgFollowers: Float
+  websiteClicks: Int
+  avgWebsiteClicks: Float
+  numberClicks: Int
+  avgNumberClicks: Float
+  avgTeamProfileClicks: Float
+  avgTeamFollowers: Float
+  avgTeamWebsiteClicks: Float
+  avgTeamNumberClicks: Float
+  clientFollowings: Int
+  proFollowings: Int
+  businessFollowings: Int
+  clientFollowers: Int
+  proFollowers: Int
+  businessFollowers: Int
+}
+input CoordinatesBoundsInput {
+  ne: CoordinatesInput!
+  nw: CoordinatesInput!
+  se: CoordinatesInput!
+  sw: CoordinatesInput!
+}
+input CoordinatesInput {
+  lng: Float!
+  lat: Float!
+}
+type Conversation {
+  id: ID
+  messages: [Message]
+  participants: [User]
+  latestMessage: Message
+  updatedAt: Moment
+}
+type Message {
+  id: ID
+  message: String
+  user: User
+  created: Moment
+}
+type Post {
+  id: ID
+  content: String
+  author: User
+  likes: [User]
+  comments: [Comment]
+  updatedAt: Moment
+  createdAt: Moment
+  photos: [String]
+  numOfLikes: Int
+  numOfComments: Int
+  isLiked: Boolean
+}
+type Comment {
+  id: ID
+  author: User
+  content: String
+  createdAt: Moment
+  updatedAt: Moment
+}
+type Mutation {
+  clientSignup(email: String!, password: String!, name: String!): User
+  proSignup(email: String!, password: String!, name: String!): User
+  businessSignup(
+    email: String!
+    password: String!
+    name: String!
+    placeID: ID!
+  ): User
+  signin(email: String!, password: String!): String
+  sendAccountConfirmationEmail(userID: String, email: String): String
+  verifyAccountConfirmationToken(token: String!): Boolean
+  getBusinessFromAddress(address: String!): Business
+  addPhoto(file: Upload!): String @auth
+  removePhoto(photo: String!): Boolean @auth
+  addBio(bio: String!): Boolean @auth
+  addWorkplace(businessID: ID!, title: String!): Workplace @auth
+  removeWorkplace(workplaceID: ID!): ID @auth
+  addServices(
+    services: [WorkplaceServiceInput]!
+    workplaceID: ID!
+  ): [WorkplaceService] @auth
+  addWorkplaceWorkingTime(
+    workplaceID: ID!
+    workingTime: [WorkingTimeInput]!
+  ): [WorkingTime] @auth
+  addQualification(qualification: QualificationInput!): Qualification @auth
+  removeQualification(qualificationID: ID!): ID @auth
+  addAward(award: AwardInput!): Award @auth
+  removeAward(awardID: ID!): ID @auth
+  addCareerHistory(
+    title: String!
+    startDate: Moment!
+    endDate: Moment!
+    businessID: ID!
+  ): CareerHistory @auth
+  removeCareerHistory(careerHistoryID: ID!): ID @auth
+}
+scalar Upload
+input WorkplaceServiceInput {
+  name: String!
+  tags: [String]!
+  kind: String!
+}
+input WorkingTimeInput {
+  day: String
+  startTime: Moment
+  endTime: Moment
+}
+input QualificationInput {
+  title: String!
+  provider: String!
+  completedDate: Moment!
+}
+input AwardInput {
+  title: String!
+  provider: String!
+  receivedDate: Moment!
+}
+input OpeningTimeInput {
+  day: String!
+  startTime: Moment
+  endTime: Moment
+}
+input BusinessServiceInput {
+  name: String!
+  tags: [String]!
+  kind: String!
+}
+type Subscription {
+  conversationAdded(subscriberID: ID!): Conversation
+  messageAdded(conversationID: ID!): Message
+  conversationUpdated(subscriberID: ID!): Conversation
+}
+enum Role {
+  CLIENT
+  PRO
+  BUSINESS
+  ADMIN
+}
+type File {
+  filename: String!
+  mimetype: String!
+  encoding: String!
+}
