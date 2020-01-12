@@ -1,3 +1,6 @@
+from gql import gql
+
+
 class GraphqlSerializer:
     @staticmethod
     def serialize():
@@ -12,6 +15,9 @@ class GraphqlSerializer:
             file_path {str} -- The path to the file
 
         Returns:
-            GraphqlObjectType -- A GraphqlObjectType of the content of the file
+            graphql.language.ast.Document -- A Graphql document
         """
-        raise NotImplementedError
+
+        with open(file_path, "r") as f:
+            file_content = f.read()
+            return gql(file_content)

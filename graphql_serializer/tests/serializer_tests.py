@@ -1,7 +1,8 @@
 import os
 from unittest import TestCase
 
-from graphql_serializer.objects import GraphqlObjectType
+from graphql.language.ast import Document
+
 from graphql_serializer.serializer import GraphqlSerializer
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,4 +16,4 @@ class SerializerTests(TestCase):
         graphql_object = GraphqlSerializer.read_graphql(graphql_file_path)
 
         self.assertIsNotNone(graphql_object)
-        self.assertIsInstance(graphql_object, GraphqlObjectType)
+        self.assertIsInstance(graphql_object, Document)
